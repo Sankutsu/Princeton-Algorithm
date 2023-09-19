@@ -27,7 +27,7 @@ public class PercolationStats
                 int col = StdRandom.uniform(n) + 1;
                 perc.open( row , col );
             }
-            percoshreshold[i] = perc.numberOfOpenSites() / n;
+            percoshreshold[i] = perc.numberOfOpenSites() / area;
         }
     }
 
