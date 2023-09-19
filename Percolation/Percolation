@@ -1,0 +1,126 @@
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+
+public class Percolation
+{
+    private WeightedQuickUnionUF uf;
+    private WeightedQuickUnionUF ufforall;
+    private int gridwidth;
+    private int opensites;
+    private int dx[] = { -1 , 0 , 0 , 1 };
+    private int dy[] = { 0 , -1 , 1 , 0 };
+    private boolean isPercolated;
+    private boolean[][] ifOpen;
+    public Percolation( int n )
+    {
+        if ( n<=0 )
+        {
+            throw new IllegalArgumentException( "n-by-n grid's must be positive" );
+        }
+        uf = new WeightedQuickUnionUF( n*n + 2 );
+        ufforall = new WeightedQuickUnionUF( n*n + 1 );
+        gridwidth = n;
+        opensites = 0;
+        isPercolated = false;
+        ifOpen = new boolean[n][n];
+        for ( int i=0 ; i<n ; i++ )
+        {
+            for ( int j=0 ; j<n ; j++ )
+            {
+                ifOpen[i][j] = false;
+            }
+        }
+
+    }
+
+    private int calcIndex( int row , int col )
+    {
+        return ( row - 1 )*gridwidth + col;
+    }
+
+    public boolean ifInGrid( int row , int col )
+    {
+        if ( row>gridwidth || row<=0 || col>gridwidth || col<=0 )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void connectNeighbours( int row , int col )
+    {
+        int newRow , newCol;
+        int currIndex = calcIndex( row , col );
+        for( int i=0 ; i<4 ; i++ )
+        {
+            newRow = row + dx[i];
+            newCol = col + dy[i];
+            if ( ifInGrid( newRow , newCol ) && isOpen( newRow , newCol ))
+            {
+                uf.union( calcIndex( newRow , newCol ) , currIndex );
+                ufforall.union( calcIndex( newRow , newCol ) , currIndex );
+            }
+        }
+    }
+    public void open( int row , int col )
+    {
+        if ( !ifInGrid( row , col ) )
+        {
+            throw new IllegalArgumentException( "the given site( row , col ) must in the n-by-n grid" );
+        }
+        int currIndex = calcIndex( row , col );
+        if ( !ifOpen[row-1][col-1] )
+        {
+            ifOpen[row-1][col-1] = true;
+            if ( row == 1 )
+            {
+                uf.union( 0 , currIndex );
+                ufforall.union( 0 , currIndex );
+            }
+            if ( row == gridwidth )
+            {
+                uf.union( gridwidth*gridwidth + 1 , currIndex );
+            }
+            connectNeighbours( row , col );
+            opensites++;
+        }
+    }
+
+    public boolean isOpen( int row , int col )
+    {
+        if ( !ifInGrid( row , col ))
+        {
+            throw new IllegalArgumentException( "the given site( row , col ) must in the n-by-n grid" );
+        }
+
+        return ifOpen[row-1][col-1];
+    }
+
+    public boolean isFull( int row , int col )
+    {
+        if( !ifInGrid( row , col ))
+        {
+            throw new IllegalArgumentException( "the given site(row,col) must in the n-by-n grid");
+        }
+        return uf.find( calcIndex( row , col )) == ufforall.find( 0 );
+    }
+
+    public int numberOfOpenSites()
+    {
+        return opensites;
+    }
+
+    public boolean percolates()
+    {
+        return uf.find( 0 ) == uf.find( gridwidth*gridwidth + 1 );
+    }
+
+    public static void main(String[] args)
+    {
+        Percolation perc = new Percolation(3);
+        perc.open( 1 , 3 );
+        perc.open( 2 , 3 );
+        perc.open( 3 , 3 );
+        perc.open( 3 , 1 );
+    }
+}
