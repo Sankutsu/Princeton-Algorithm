@@ -14,7 +14,7 @@ public class Percolation
     {
         if ( n<=0 )
         {
-            throw new IllegalArgumentException( "n-by-n grid's must be positive" );
+            throw new IllegalArgumentException( "n-by-n grid's n must be positive" );
         }
         uf = new WeightedQuickUnionUF( n*n + 2 );
         ufforall = new WeightedQuickUnionUF( n*n + 1 );
@@ -37,7 +37,7 @@ public class Percolation
         return ( row - 1 )*gridwidth + col;
     }
 
-    public boolean ifInGrid( int row , int col )
+    private boolean ifInGrid( int row , int col )
     {
         if ( row>gridwidth || row<=0 || col>gridwidth || col<=0 )
         {
@@ -66,7 +66,7 @@ public class Percolation
     {
         if ( !ifInGrid( row , col ) )
         {
-            throw new IllegalArgumentException( "the given site( row , col ) must in the n-by-n grid" );
+            throw new IllegalArgumentException( "the given site(row, col) must in the n-by-n grid" );
         }
         int currIndex = calcIndex( row , col );
         if ( !ifOpen[row-1][col-1] )
@@ -90,7 +90,7 @@ public class Percolation
     {
         if ( !ifInGrid( row , col ))
         {
-            throw new IllegalArgumentException( "the given site( row , col ) must in the n-by-n grid" );
+            throw new IllegalArgumentException( "the given site(row,col) must in the n-by-n grid" );
         }
 
         return ifOpen[row-1][col-1];
@@ -102,7 +102,7 @@ public class Percolation
         {
             throw new IllegalArgumentException( "the given site(row,col) must in the n-by-n grid");
         }
-        return uf.find( calcIndex( row , col )) == ufforall.find( 0 );
+        return ufforall.find( calcIndex( row , col )) == ufforall.find( 0 );
     }
 
     public int numberOfOpenSites()
